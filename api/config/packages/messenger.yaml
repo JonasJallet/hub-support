@@ -1,0 +1,11 @@
+framework:
+    messenger:
+        default_bus: command.bus
+        buses:           
+            command.bus:
+                middleware:
+                    - validation
+                    - 'App\Application\Bus\Middleware\MapToEntityMiddleware'
+            query.bus:
+                middleware:
+                    - validation

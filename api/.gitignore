@@ -1,0 +1,57 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+/vendorSAVE/
+/*.lock
+/*.log
+/.idea
+/.DS_Store
+/tests/.DS_Store
+/templates/.DS_Store
+/public/.DS_Store
+/src/.DS_Store
+/.htaccess
+/curl.log
+/tools/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+/tests/coverage
+###< phpunit/phpunit ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+###> callas/batch ###
+/src/Infrastructure/Symfony/Command/*.txt
+###> callas/batch ###
+
+/public/temp
+/pdo_cred.ini
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> carrier_thumbnail ###
+/public/uploads/carrier_thumbnail
+###< carrier_thumbnail ###
+
+**/.DS_Store
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
+
+###< symfony/phpunit-bridge ###
+.Halite.key
+/public/coverage
+src/Infrastructure/Controller/Api/DebugControllerTestLocal.php
