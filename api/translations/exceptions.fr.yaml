@@ -1,3 +1,4 @@
 Exceptions:
     User:
         UserNotFound: "User %email% doesn't exist"
+        UserUnauthorized: "User %email% is not authorized"

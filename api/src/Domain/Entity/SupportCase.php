@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'form')]
+#[ORM\Table(name: 'support_case')]
 #[HasLifecycleCallbacks]
 class SupportCase
 {
@@ -29,7 +29,7 @@ class SupportCase
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private mixed $file = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'forms')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'supportCases')]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
@@ -90,7 +90,7 @@ class SupportCase
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        $this->user?->addForm($this);
+        $this->user?->addSupportCase($this);
 
         return $this;
     }

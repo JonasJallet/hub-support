@@ -37,11 +37,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\OneToMany(targetEntity: SupportCase::class, mappedBy: 'user')]
-    private Collection $forms;
+    private Collection $supportCases;
 
     public function __construct()
     {
-        $this->forms = new ArrayCollection();
+        $this->supportCases = new ArrayCollection();
     }
 
     public function getRoles(): array
@@ -118,15 +118,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, SupportCase>
      */
-    public function getForms(): Collection
+    public function getSupportCases(): Collection
     {
-        return $this->forms;
+        return $this->supportCases;
     }
 
-    public function addForm(SupportCase $form): self
+    public function addSupportCase(SupportCase $form): self
     {
-        if (!$this->forms->contains($form)) {
-            $this->forms->add($form);
+        if (!$this->supportCases->contains($form)) {
+            $this->supportCases->add($form);
             $form->setUser($this);
         }
 

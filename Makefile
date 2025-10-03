@@ -57,10 +57,6 @@ up: api-up web-app-up
 down: api-down web-app-down
 	@echo "Api and Web-app are down."
 
-logs:
-	@echo "Tailing logs..."
-	@$(MAKE) -C $(BACK_DIR) logs & $(FRONT_COMPOSE) logs -f
-
 restart: down start
 
 # ─────────────────────────────
@@ -74,5 +70,4 @@ help:
 	@echo "  make web-app-up    → Start frontend containers"
 	@echo "  make start         → Start api (with build) && web-app"
 	@echo "  make down          → Stop everything"
-	@echo "  make logs          → Show logs for both"
 	@echo "  make restart       → Restart both"
