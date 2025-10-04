@@ -17,7 +17,7 @@ use Throwable;
 
 #[Route('support-cases', name: 'api_support_case_')]
 #[OA\Tag(name: 'Support Case')]
-class AddSupportCaseController extends AbstractController
+class SupportCaseController extends AbstractController
 {
     public function __construct(
         private readonly CommandBus $commandBus,
@@ -26,7 +26,7 @@ class AddSupportCaseController extends AbstractController
     ) {
     }
 
-    #[Route('', name: 'post', methods: ['POST'])]
+    #[Route('', name: 'add', methods: ['POST'])]
     #[OA\Post(
         path: '/support-cases',
         description: 'Add a new support case',

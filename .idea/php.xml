@@ -145,6 +145,8 @@
       <path value="$PROJECT_DIR$/api/vendor/symfony/cache-contracts" />
       <path value="$PROJECT_DIR$/api/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/api/vendor/nelmio/cors-bundle" />
+      <path value="$PROJECT_DIR$/api/vendor/lcobucci/clock" />
+      <path value="$PROJECT_DIR$/api/vendor/lexik/jwt-authentication-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />

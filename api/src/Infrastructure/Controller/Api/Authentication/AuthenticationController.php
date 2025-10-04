@@ -13,8 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Throwable;
 
+#[OA\Tag(name: 'Authentication')]
 class AuthenticationController extends AbstractController
 {
     public function __construct(
@@ -68,6 +70,7 @@ class AuthenticationController extends AbstractController
             ),
         ]
     )]
+    #[IsGranted("PUBLIC_ACCESS")]
     public function login(Request $request): JsonResponse
     {
         try {
@@ -78,24 +81,21 @@ class AuthenticationController extends AbstractController
             $user = $this->queryBus->ask($readUser);
 
             $userEntity = $this->doctrineUserRepository->find($user->id);
-            $this->authentication->ensureLoginIsValid($userEntity, $result->password);
+
+            $token = $this->authentication->ensureLoginIsValid($userEntity, $result->password);
 
             return new JsonResponse(
                 $this->responseFormatter->formatResponse(
                     "Success.Authentication.Login",
                     [],
                     'success',
-                    $user
-                )
-                , Response::HTTP_OK
+                    array_merge((array)$user, ['token' => $token])
+                ),
+                Response::HTTP_OK
             );
         } catch (Throwable $exception) {
             [$response, $status] = $this->responseFormatter->formatException($exception);
-
-            return new JsonResponse(
-                $response,
-                $status
-            );
+            return new JsonResponse($response, $status);
         }
     }
 }

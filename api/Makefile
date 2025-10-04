@@ -24,7 +24,11 @@ build: ## Builds the Docker images
 up: ## Start the docker hub in detached mode (no logs)
 	@$(DOCKER_COMP) up --detach
 
-start: build up ## Build and start the containers
+start:
+	$(MAKE) generate-tls-cert
+	$(MAKE) build
+	$(MAKE) up
+	$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists\
 
 down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans
@@ -59,3 +63,9 @@ sf: ## List all Symfony commands or pass the parameter "c=" to run a given comma
 
 cc: c=c:c ## Clear the cache
 cc: sf
+
+generate-tls-cert:
+	@echo Generating TLS certificate with mkcert...
+	@if not exist frankenphp\certs mkdir frankenphp\certs
+	@mkcert -cert-file frankenphp\certs\tls.pem -key-file frankenphp\certs\tls.key localhost
+	@echo TLS certificate and key created at frankenphp/certs

@@ -4,14 +4,12 @@ import { computed } from 'vue'
 
 const auth = useAuthStore()
 
-console.log("toto", auth);
-
-// const userName = computed(() => {
-//   if (auth.user?) {
-//     return `${auth.user.firstName} ${auth.user.lastName}`
-//   }
-//   return ''
-// })
+const userName = computed(() => {
+  if (auth.user) {
+    return `${auth.user.firstName} ${auth.user.lastName}`
+  }
+  return ''
+})
 
 const handleLogout = () => {
   auth.logout()
@@ -25,7 +23,7 @@ const handleLogout = () => {
     </div>
 
     <div>
-<!--      <span>Bienvenue, {{ userName }}</span>-->
+      <span>Bienvenue, {{ userName }}</span>
     </div>
   </header>
 

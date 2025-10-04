@@ -4,11 +4,11 @@ import { useFetch, useStorage } from "@vueuse/core";
 import type { User, PasswordAccess, RegistrationAccess } from "../types/auth";
 import router from '../router';
 
-// const baseUrl = import.meta.env.VITE_API_URL;
 const baseUrl = "https://localhost/api/"
 
 export const useAuthStore = defineStore("auth", () => {
   const user = useStorage<User | null>("user", null);
+  const token = useStorage<string | null>("token", null);
   const isAuthenticated = useStorage<boolean>("isAuthenticated", false);
   const currentLocale = useStorage<{ name: string; code: string }>(
     "currentLocale",
@@ -20,15 +20,39 @@ export const useAuthStore = defineStore("auth", () => {
   const failedLogin = (reason: string | null = "common.invalid-credentials") => {
     isAuthenticated.value = false;
     user.value = null;
+    token.value = null;
     isLoading.value = false;
     error.value = reason;
   };
+
+  const authenticate = async (): Promise<boolean> => {
+    const { error: userError } = await useFetch<User>(
+      `${baseUrl}users/me`,
+      {
+        headers: { Authorization: `Bearer ${token.value}` },
+      },
+    ).json();
+
+    if (userError.value) {
+      if (!userError.value.is_internal) failedLogin();
+      return false;
+    }
+
+    isAuthenticated.value = true;
+    return true;
+  };
+
 
   const login = async (credentials: { email: string; password: string }): Promise<boolean> => {
     isLoading.value = true;
     error.value = null;
 
-    const { data: userData, error: loginError, statusCode, response } = await useFetch(`${baseUrl}login`)
+    const {
+      data: userData,
+      error: loginError,
+      statusCode,
+      response
+    } = await useFetch(`${baseUrl}login`)
       .post(credentials)
       .json();
 
@@ -39,17 +63,26 @@ export const useAuthStore = defineStore("auth", () => {
       } else {
         error.value = "Une erreur est survenue";
       }
+      failedLogin(error.value);
       return false;
     }
 
-    user.value = userData.value.data;
-    isAuthenticated.value = true;
-    isLoading.value = false;
-    return true;
+    const responseData = userData.value?.data;
+    if (responseData?.token) {
+      token.value = responseData.token;
+      user.value = responseData;
+      isAuthenticated.value = true;
+      await authenticate();
+      return true;
+    } else {
+      failedLogin("common.no-token-received");
+      return false;
+    }
   };
 
   const logout = () => {
     user.value = null;
+    token.value = null;
     isAuthenticated.value = false;
     isLoading.value = false;
     error.value = null;
@@ -66,7 +99,6 @@ export const useAuthStore = defineStore("auth", () => {
   const getCurrentLocale = () => {
     return currentLocale.value;
   };
-
 
   const resetPassword = async (payload: PasswordAccess) => {
     isLoading.value = true;
@@ -89,9 +121,7 @@ export const useAuthStore = defineStore("auth", () => {
     isLoading.value = true;
     error.value = null;
 
-    const registered = await useFetch(
-      `${baseUrl}users`,
-    )
+    const registered = await useFetch(`${baseUrl}users`,)
       .post(credentials)
       .json();
 
@@ -105,16 +135,20 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (registered.data.value?.data) {
       const userData = registered.data.value.data;
-      const username = `${userData.firstName} ${userData.lastName}`;
-
-      console.log(`[SUCCESS] User registered: ${username}. Account is now active.`);
+      console.log(`[SUCCESS] User registered: ${userData.email}. Account is now active.`);
     }
 
     await router.push("/");
   };
 
+  const handleUnauthorized = () => {
+    logout();
+    router.push('/login');
+  };
+
   return {
     user,
+    token,
     isAuthenticated,
     isLoading,
     error,
@@ -124,5 +158,6 @@ export const useAuthStore = defineStore("auth", () => {
     getCurrentLocale,
     register,
     resetPassword,
+    handleUnauthorized,
   };
 });
