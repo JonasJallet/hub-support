@@ -15,12 +15,11 @@ readonly class Authentication implements AuthenticationInterface
     {
     }
 
-    public function ensureLoginIsValid(User $user, string $sendPassword): void
+    public function ensureLoginIsValid(User $user, string $providedPassword): void
     {
-        if (!$this->passwordEncoder->isPasswordValid($user, $sendPassword)) {
-            if ($user instanceof User) {
-                throw new UserUnauthorizedException($user->getEmail());
-            }
+        if (!$this->passwordEncoder->isPasswordValid($user, $providedPassword)) {
+
+            throw new UserUnauthorizedException($user->getEmail());
         }
     }
 

@@ -5,3 +5,5 @@ Success:
         Deleted: "%entity% a été supprimé avec succès."
         Retrieved: "%entity% a été récupéré avec succès."
         RetrievedList: "Liste de %entity% récupérée avec succès."
+    Authentication:
+        Login: "Connexion réussie."

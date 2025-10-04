@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useAuthStore } from '@/stores/authStore.ts'; // Assurez-vous que le chemin est correct
+import { useAuthStore } from '@/stores/authStore.ts';
 
-// Récupération du store d'authentification
 const authStore = useAuthStore();
 
-// --- État du formulaire ---
 const registrationData = ref({
   firstName: '',
   lastName: '',
@@ -13,7 +11,6 @@ const registrationData = ref({
   password: '',
 });
 
-// --- Logique de validation du mot de passe ---
 const passwordChecks = computed(() => {
   const p = registrationData.value.password;
   return {
@@ -24,33 +21,28 @@ const passwordChecks = computed(() => {
   };
 });
 
-// Vérifie si TOUS les critères du mot de passe sont remplis
 const isPasswordValid = computed(() => {
   return Object.values(passwordChecks.value).every(Boolean);
 });
 
-// Vérifie si le formulaire entier est prêt à être soumis
 const isFormValid = computed(() => {
   const data = registrationData.value;
   return (
     data.firstName.trim() !== '' &&
     data.lastName.trim() !== '' &&
-    /\S+@\S+\.\S+/.test(data.email) && // Validation basique de l'email
+    /\S+@\S+\.\S+/.test(data.email) &&
     isPasswordValid.value
   );
 });
 
-// --- Gestion de la soumission ---
 const handleRegister = async () => {
   if (!isFormValid.value) {
     authStore.error = "Veuillez vérifier tous les champs et les critères du mot de passe.";
     return;
   }
 
-  // Clear any previous error before attempting to register
   authStore.error = null;
 
-  // Création du payload d'inscription
   const payload = {
     email: registrationData.value.email,
     firstName: registrationData.value.firstName,
@@ -58,15 +50,9 @@ const handleRegister = async () => {
     password: registrationData.value.password,
   };
 
-  // Note: La fonction register du store utilise actuellement `PasswordAccess`.
-  // Nous faisons ici l'hypothèse que ce type dans `../types/auth` est mis à jour
-  // pour inclure firstName et lastName, ou que le store gère l'extraction.
   await authStore.register(payload);
-
-  // La navigation vers "/" est gérée dans l'action `register` du store.
 };
 
-// Fonction utilitaire pour le style des validations
 const validationClass = (isValid: boolean, isDirty: boolean) => {
   if (!isDirty) return 'text-gray-400';
   return isValid ? 'text-green-500' : 'text-red-500';
@@ -82,8 +68,6 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
       </h2>
 
       <form @submit.prevent="handleRegister" class="space-y-6">
-
-        <!-- Prénom -->
         <div>
           <label for="firstName" class="block text-sm font-medium text-gray-700">Prénom</label>
           <input
@@ -96,8 +80,6 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
-
-        <!-- Nom -->
         <div>
           <label for="lastName" class="block text-sm font-medium text-gray-700">Nom</label>
           <input
@@ -110,8 +92,6 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
-
-        <!-- Email -->
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700">Adresse Email</label>
           <input
@@ -124,8 +104,6 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
         </div>
-
-        <!-- Mot de passe -->
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
           <input
@@ -138,7 +116,6 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
 
-          <!-- Indicateurs de validation du mot de passe -->
           <ul class="text-xs mt-2 space-y-1">
             <li :class="validationClass(passwordChecks.minLength, registrationData.password.length > 0)">
               <span class="font-semibold">{{ passwordChecks.minLength ? '✓' : '✗' }}</span> 8 caractères minimum
@@ -155,12 +132,10 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
           </ul>
         </div>
 
-        <!-- Affichage de l'erreur du store -->
         <p v-if="authStore.error" class="text-sm font-medium text-red-600 p-2 bg-red-50 border border-red-200 rounded-lg">
           {{ authStore.error }}
         </p>
 
-        <!-- Bouton de soumission -->
         <button
           type="submit"
           :disabled="authStore.isLoading || !isFormValid"

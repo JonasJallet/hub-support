@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useFetch, useStorage } from "@vueuse/core";
-import type { AuthResponse, User, PasswordAccess, RegistrationAccess } from "../types/auth";
+import type { User, PasswordAccess, RegistrationAccess } from "../types/auth";
 import router from '../router';
 
 // const baseUrl = import.meta.env.VITE_API_URL;
@@ -14,7 +14,6 @@ export const useAuthStore = defineStore("auth", () => {
     "currentLocale",
     { name: "🇺🇸", code: "en" },
   );
-  const token = useStorage<string | null>("token", null);
   const isLoading = ref<boolean>(false);
   const error = ref<string | null>(null);
 
@@ -25,63 +24,28 @@ export const useAuthStore = defineStore("auth", () => {
     error.value = reason;
   };
 
-  const login = async (credentials: { email: string; password: string }) => {
+  const login = async (credentials: { email: string; password: string }): Promise<boolean> => {
     isLoading.value = true;
     error.value = null;
 
-    const {
-      data,
-      error: loginError,
-      statusCode,
-      response,
-    } = await useFetch<AuthResponse>(`${baseUrl}login`)
+    const { data: userData, error: loginError, statusCode, response } = await useFetch(`${baseUrl}login`)
       .post(credentials)
       .json();
 
     if (loginError.value) {
       if (statusCode.value === 403) {
         const res = await response.value?.json();
-        failedLogin(res?.message || "common.permission-denied");
-        return;
+        error.value = res?.message || "common.permission-denied";
+      } else {
+        error.value = "Une erreur est survenue";
       }
-      failedLogin();
-      return;
+      return false;
     }
 
-    if (data.value?.token) {
-      token.value = data.value.token;
-      await authenticate();
-    } else {
-      failedLogin("common.login-failed");
-    }
-  };
-
-  const authenticate = async (): Promise<boolean> => {
-    isLoading.value = true;
-    error.value = null;
-
-    const { data: userData, error: userError } = await useFetch<User>(
-      `${baseUrl}users/me`,
-      {
-        headers: { Authorization: `Bearer ${token.value}` },
-      },
-    ).json();
-
+    user.value = userData.value.data;
+    isAuthenticated.value = true;
     isLoading.value = false;
-
-    if (userError.value) {
-      failedLogin();
-      return false;
-    }
-
-    if (userData.value?.data) {
-      user.value = userData.value.data;
-      isAuthenticated.value = true;
-      return true;
-    } else {
-      failedLogin("common.user-data-missing");
-      return false;
-    }
+    return true;
   };
 
   const logout = () => {
@@ -125,11 +89,9 @@ export const useAuthStore = defineStore("auth", () => {
     isLoading.value = true;
     error.value = null;
 
-    const registered = await useFetch<AuthResponse>(
-      // Updated endpoint path as requested
+    const registered = await useFetch(
       `${baseUrl}users`,
     )
-      // Using standard POST with JSON body (fixes 415 error, reintroduces OPTIONS preflight)
       .post(credentials)
       .json();
 
@@ -137,30 +99,15 @@ export const useAuthStore = defineStore("auth", () => {
 
     if (registered.error.value) {
       console.log(registered.error)
-      // Use existing failedLogin function
       failedLogin("Echec de l'inscription");
       return;
     }
 
-    // Adapt success logic
     if (registered.data.value?.data) {
       const userData = registered.data.value.data;
-      // The API response structure must match this path: data.value.data.firstName/lastName
       const username = `${userData.firstName} ${userData.lastName}`;
 
-      // NOTE: 'toast.add' and 't' (translation) are external dependencies
-      // that must be imported/injected into your Pinia store (e.g., from PrimeVue and vue-i18n).
-      // Using console.log as a placeholder for the toast notification:
       console.log(`[SUCCESS] User registered: ${username}. Account is now active.`);
-
-      /* // Placeholder for original toast logic:
-      toast.add({
-        severity: "success",
-        summary: t("pages.unauth.registration.welcome", { user: username }),
-        detail: t("pages.unauth.registration.account-is-active"),
-        life: 3000,
-      });
-      */
     }
 
     await router.push("/");
@@ -177,6 +124,5 @@ export const useAuthStore = defineStore("auth", () => {
     getCurrentLocale,
     register,
     resetPassword,
-    authenticate
   };
 });
