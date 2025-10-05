@@ -4,7 +4,7 @@ import { useFetch, useStorage } from "@vueuse/core";
 import type { User, PasswordAccess, RegistrationAccess } from "../types/auth";
 import router from '../router';
 
-const baseUrl = "https://localhost/api/"
+const baseUrl = import.meta.env.VITE_API_URL;
 
 export const useAuthStore = defineStore("auth", () => {
   const user = useStorage<User | null>("user", null);

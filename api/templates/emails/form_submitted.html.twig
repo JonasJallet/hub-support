@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Nouveau ticket de support</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body, table, td, a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            height: 100% !important;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+        a {
+            text-decoration: none;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(90deg, #4f46e5, #6366f1);
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 25px;
+            color: #374151;
+        }
+        .content h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+        .content p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .field {
+            background-color: #f3f4f6;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .field strong {
+            display: block;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        .footer {
+            background: #f9fafb;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+        .footer a {
+            color: #6366f1;
+        }
+        .file-box {
+            background-color: #eef2ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #4f46e5;
+            display: inline-block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>📩 Nouveau ticket de support</h1>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <p>Un nouvel utilisateur a soumis un formulaire de support.</p>
+
+        {% if user_email %}
+            <div class="field">
+                <strong>Adresse e-mail</strong>
+                <span>{{ user_email }}</span>
+            </div>
+        {% endif %}
+
+        {% if form.subject is defined %}
+            <div class="field">
+                <strong>Sujet</strong>
+                <span>{{ form.subject }}</span>
+            </div>
+        {% endif %}
+
+        {% if form.message is defined %}
+            <div class="field">
+                <strong>Message</strong>
+                <p>{{ form.message|nl2br }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Cet e-mail a été envoyé automatiquement par le système de support.<br>
+        Merci de ne pas y répondre directement.
+    </div>
+</div>
+</body>
+</html>

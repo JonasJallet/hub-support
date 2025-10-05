@@ -17,22 +17,18 @@ class AddSupportCase implements Command
     #[Assert\NotBlank(
         message: "Exceptions.Assert.NotBlank",
     )]
-    #[Assert\Range(
-        notInRangeMessage: "Exceptions.Assert.Range",
-        min: 1,
-        max: 2100,
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Exceptions.Assert.Length.Subject",
     )]
-    public int $subject;
+    #[Assert\Type('string')]
+    public string $subject;
 
     #[Assert\NotBlank(
         message: "Exceptions.Assert.NotBlank",
     )]
-    #[Assert\Range(
-        notInRangeMessage: "Exceptions.Assert.Range",
-        min: 1,
-        max: 50,
-    )]
-    public int $message;
+    #[Assert\Type('string')]
+    public string $message;
 
     #[Assert\File(
         maxSize: "2M",

@@ -20,11 +20,11 @@ class SupportCase
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private int $subject;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $subject;
 
-    #[ORM\Column(type: Types::INTEGER)]
-    private int $message;
+    #[ORM\Column(type: Types::TEXT)]
+    private string $message;
 
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private mixed $file = null;
@@ -49,23 +49,23 @@ class SupportCase
         return $this->id;
     }
 
-    public function getSubject(): int
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    public function setSubject(int $subject): self
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
         return $this;
     }
 
-    public function getMessage(): int
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    public function setMessage(int $message): self
+    public function setMessage(string $message): self
     {
         $this->message = $message;
         return $this;

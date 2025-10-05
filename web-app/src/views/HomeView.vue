@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore.ts'
 import { computed } from 'vue'
+import SupportCase from '@/components/SupportCase.vue'
 
 const auth = useAuthStore()
 
@@ -19,14 +20,17 @@ const handleLogout = () => {
 <template>
   <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
     <div>
-      <a v-if="auth.isAuthenticated" href="#" @click.prevent="handleLogout">Déconnexion</a>
+      <span>Bienvenue, {{ userName }}</span>
     </div>
 
     <div>
-      <span>Bienvenue, {{ userName }}</span>
+      <a v-if="auth.isAuthenticated" href="#" @click.prevent="handleLogout" style="display: flex; align-items: center; gap: 0.5rem;">
+        <font-awesome-icon icon="sign-out-alt" /> Déconnexion
+      </a>
     </div>
   </header>
 
   <main>
+    <SupportCase />
   </main>
 </template>
