@@ -28,7 +28,7 @@ start:
 	$(MAKE) generate-tls-cert
 	$(MAKE) build
 	$(MAKE) up
-	$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists\
+	$(SYMFONY) lexik:jwt:generate-keypair --skip-if-exists
 
 down: ## Stop the docker hub
 	@$(DOCKER_COMP) down --remove-orphans

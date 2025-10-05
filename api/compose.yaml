@@ -4,7 +4,7 @@ services:
     container_name: php_fpm
     restart: unless-stopped
     environment:
-      SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
+      SERVER_NAME: ${SERVER_NAME:-localhost}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       # Run "composer require symfony/orm-pack" to install and configure Doctrine ORM
@@ -16,6 +16,8 @@ services:
     volumes:
       - caddy_data:/data
       - caddy_config:/config
+      - ./frankenphp/certs/tls.pem:/etc/ssl/certs/tls.pem:ro
+      - ./frankenphp/certs/tls.key:/etc/ssl/certs/tls.key:ro
     ports:
       # HTTP
       - target: 80
