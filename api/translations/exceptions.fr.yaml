@@ -1,4 +1,5 @@
 Exceptions:
     User:
-        UserNotFound: "User %email% doesn't exist"
-        UserUnauthorized: "User %email% is not authorized"
+        UserNotFound: 'L''utilisateur %email% n''existe pas.'
+        UserUnauthorized: 'L''utilisateur %email% n''est pas autorisé.'
+        UserAlreadyExist: 'L''email d''utilisateur est déjà utilisé.'

@@ -3,6 +3,7 @@
 namespace App\Application\Command\User\AddUser;
 
 use App\Application\Bus\Command\CommandHandler;
+use App\Domain\Exception\User\UserAlreadyExistException;
 use App\Domain\Repository\User\UserRepository;
 use App\Domain\Service\Authentication\AuthenticationInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -19,6 +20,11 @@ final readonly class AddUserHandler implements CommandHandler
 
     public function __invoke(AddUser $addUser): void
     {
+        $user = $this->userRepository->read($addUser->email);
+        if ($user) {
+            throw new UserAlreadyExistException($addUser->email);
+        }
+
         $user = $addUser->toEntity();
 
         $hashedPassword = $this->authentication->hashPassword($user, $addUser->password);

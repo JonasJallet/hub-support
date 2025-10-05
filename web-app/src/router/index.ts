@@ -46,9 +46,6 @@ router.beforeEach(
       return next("/");
     }
 
-    console.log("To:", to.path);
-    console.log("Is Authenticated:", authStore.isAuthenticated);
-
     if (
       !authStore.isAuthenticated && !publicPages.includes(to.path)
     ) {

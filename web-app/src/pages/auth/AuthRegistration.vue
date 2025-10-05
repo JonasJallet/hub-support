@@ -1,71 +1,72 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useAuthStore } from '@/stores/authStore.ts';
+import { ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/authStore.ts'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 
 const registrationData = ref({
   firstName: '',
   lastName: '',
   email: '',
   password: '',
-});
+})
 
 const passwordChecks = computed(() => {
-  const p = registrationData.value.password;
+  const p = registrationData.value.password
   return {
     minLength: p.length >= 8,
     hasUppercase: /[A-Z]/.test(p),
     hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(p),
     hasDigit: /\d/.test(p),
-  };
-});
+  }
+})
 
 const isPasswordValid = computed(() => {
-  return Object.values(passwordChecks.value).every(Boolean);
-});
+  return Object.values(passwordChecks.value).every(Boolean)
+})
 
 const isFormValid = computed(() => {
-  const data = registrationData.value;
+  const data = registrationData.value
   return (
     data.firstName.trim() !== '' &&
     data.lastName.trim() !== '' &&
     /\S+@\S+\.\S+/.test(data.email) &&
     isPasswordValid.value
-  );
-});
+  )
+})
 
 const handleRegister = async () => {
   if (!isFormValid.value) {
-    authStore.error = "Veuillez vérifier tous les champs et les critères du mot de passe.";
-    return;
+    authStore.error = 'Veuillez vérifier tous les champs et les critères du mot de passe.'
+    return
   }
 
-  authStore.error = null;
+  authStore.error = null
 
   const payload = {
     email: registrationData.value.email,
     firstName: registrationData.value.firstName,
     lastName: registrationData.value.lastName,
     password: registrationData.value.password,
-  };
+  }
 
-  await authStore.register(payload);
-};
-
-const validationClass = (isValid: boolean, isDirty: boolean) => {
-  if (!isDirty) return 'text-gray-400';
-  return isValid ? 'text-green-500' : 'text-red-500';
+  await authStore.register(payload)
 }
 
+const validationClass = (isValid: boolean, isDirty: boolean) => {
+  if (!isDirty) return 'text-gray-400'
+  return isValid ? 'text-green-500' : 'text-red-500'
+}
+
+onMounted(() => {
+  authStore.error = null
+})
 </script>
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl space-y-6">
-      <h2 class="text-3xl font-extrabold text-gray-900 text-center">
-        Créer un compte
-      </h2>
+      <h2 class="text-3xl font-extrabold text-gray-900 text-center">Créer un compte</h2>
 
       <form @submit.prevent="handleRegister" class="space-y-6">
         <div>
@@ -117,22 +118,45 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
           />
 
           <ul class="text-xs mt-2 space-y-1">
-            <li :class="validationClass(passwordChecks.minLength, registrationData.password.length > 0)">
-              <span class="font-semibold">{{ passwordChecks.minLength ? '✓' : '✗' }}</span> 8 caractères minimum
+            <li
+              :class="
+                validationClass(passwordChecks.minLength, registrationData.password.length > 0)
+              "
+            >
+              <span class="font-semibold">{{ passwordChecks.minLength ? '✓' : '✗' }}</span> 8
+              caractères minimum
             </li>
-            <li :class="validationClass(passwordChecks.hasUppercase, registrationData.password.length > 0)">
-              <span class="font-semibold">{{ passwordChecks.hasUppercase ? '✓' : '✗' }}</span> Au moins une majuscule
+            <li
+              :class="
+                validationClass(passwordChecks.hasUppercase, registrationData.password.length > 0)
+              "
+            >
+              <span class="font-semibold">{{ passwordChecks.hasUppercase ? '✓' : '✗' }}</span> Au
+              moins une majuscule
             </li>
-            <li :class="validationClass(passwordChecks.hasDigit, registrationData.password.length > 0)">
-              <span class="font-semibold">{{ passwordChecks.hasDigit ? '✓' : '✗' }}</span> Au moins un chiffre
+            <li
+              :class="
+                validationClass(passwordChecks.hasDigit, registrationData.password.length > 0)
+              "
+            >
+              <span class="font-semibold">{{ passwordChecks.hasDigit ? '✓' : '✗' }}</span> Au moins
+              un chiffre
             </li>
-            <li :class="validationClass(passwordChecks.hasSpecialChar, registrationData.password.length > 0)">
-              <span class="font-semibold">{{ passwordChecks.hasSpecialChar ? '✓' : '✗' }}</span> Au moins un caractère spécial
+            <li
+              :class="
+                validationClass(passwordChecks.hasSpecialChar, registrationData.password.length > 0)
+              "
+            >
+              <span class="font-semibold">{{ passwordChecks.hasSpecialChar ? '✓' : '✗' }}</span> Au
+              moins un caractère spécial
             </li>
           </ul>
         </div>
 
-        <p v-if="authStore.error" class="text-sm font-medium text-red-600 p-2 bg-red-50 border border-red-200 rounded-lg">
+        <p
+          v-if="authStore.error"
+          class="text-sm font-medium text-red-600 p-2 bg-red-50 border border-red-200 rounded-lg"
+        >
           {{ authStore.error }}
         </p>
 
@@ -141,14 +165,31 @@ const validationClass = (isValid: boolean, isDirty: boolean) => {
           :disabled="authStore.isLoading || !isFormValid"
           class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white transition duration-150 ease-in-out"
           :class="{
-            'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500': isFormValid && !authStore.isLoading,
-            'bg-indigo-400 cursor-not-allowed': !isFormValid || authStore.isLoading
+            'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500':
+              isFormValid && !authStore.isLoading,
+            'bg-indigo-400 cursor-not-allowed': !isFormValid || authStore.isLoading,
           }"
         >
           <span v-if="authStore.isLoading" class="flex items-center">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             Inscription en cours...
           </span>

@@ -63,7 +63,6 @@ function onFileChange(e: Event) {
   if (selectedFile) handleFileSelect(selectedFile)
 }
 
-// === Cooldown dynamique ===
 const lastSentKey = 'support_case_last_sent'
 const canSend = ref(true)
 const cooldownRemaining = ref(0) // en secondes
@@ -97,14 +96,12 @@ onUnmounted(() => {
   if (intervalId) clearInterval(intervalId)
 })
 
-// Format mm:ss
 const formattedCooldown = computed(() => {
   const minutes = Math.floor(cooldownRemaining.value / 60)
   const seconds = cooldownRemaining.value % 60
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 })
 
-// Progress pour cercle
 const cooldownProgress = computed(() => {
   return ((cooldownDuration - cooldownRemaining.value) / cooldownDuration) * 100
 })

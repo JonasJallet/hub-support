@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251005131238 extends AbstractMigration
+final class Version20251005214636 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -23,9 +23,10 @@ final class Version20251005131238 extends AbstractMigration
         $this->addSql('CREATE TABLE support_case (id SERIAL NOT NULL, user_id INT DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, subject VARCHAR(255) NOT NULL, message TEXT NOT NULL, file BYTEA DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_A01E0F57A76ED395 ON support_case (user_id)');
         $this->addSql('COMMENT ON COLUMN support_case.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE users (id SERIAL NOT NULL, email VARCHAR(255) NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE users (id SERIAL NOT NULL, email VARCHAR(255) NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, last_login_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9E7927C74 ON users (email)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9C808BA5A ON users (last_name)');
+        $this->addSql('COMMENT ON COLUMN users.last_login_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE support_case ADD CONSTRAINT FK_A01E0F57A76ED395 FOREIGN KEY (user_id) REFERENCES users (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 

@@ -83,6 +83,7 @@ class AuthenticationController extends AbstractController
             $userEntity = $this->doctrineUserRepository->find($user->id);
 
             $token = $this->authentication->ensureLoginIsValid($userEntity, $result->password);
+            $userEntity->updateLastLogin();
 
             return new JsonResponse(
                 $this->responseFormatter->formatResponse(

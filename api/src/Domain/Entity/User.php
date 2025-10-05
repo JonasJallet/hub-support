@@ -2,6 +2,7 @@
 
 namespace App\Domain\Entity;
 
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -39,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: SupportCase::class, mappedBy: 'user')]
     private Collection $supportCases;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $lastLoginAt = null;
+
     public function __construct()
     {
         $this->supportCases = new ArrayCollection();
@@ -51,7 +55,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
     }
 
     public function getUserIdentifier(): string
@@ -113,6 +116,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getLastLoginAt(): DateTimeImmutable
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function updateLastLogin(): void
+    {
+        $this->lastLoginAt = new DateTimeImmutable();
     }
 
     /**

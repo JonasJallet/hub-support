@@ -4,6 +4,7 @@ namespace App\Infrastructure\Persistence\Repository;
 
 use App\Domain\Entity\User;
 use App\Domain\Repository\User\UserRepositoryInterface;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -40,5 +41,19 @@ class DoctrineUserRepository extends ServiceEntityRepository implements UserRepo
     public function browse(): array
     {
         return $this->findAll();
+    }
+
+    public function countUsersLoggedToday(): int
+    {
+        $startOfDay = (new DateTimeImmutable('today'))->setTime(0, 0, 0);
+        $endOfDay = $startOfDay->setTime(23, 59, 59);
+
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.lastLoginAt BETWEEN :start AND :end')
+            ->setParameter('start', $startOfDay)
+            ->setParameter('end', $endOfDay)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

@@ -1,8 +1,8 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
-import { useFetch, useStorage } from "@vueuse/core";
-import type { User, PasswordAccess, RegistrationAccess } from "../types/auth";
-import router from '../router';
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { useFetch, useStorage } from '@vueuse/core'
+import type { PasswordAccess, RegistrationAccess, User } from '../types/auth'
+import router from '../router'
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -121,29 +121,20 @@ export const useAuthStore = defineStore("auth", () => {
     isLoading.value = true;
     error.value = null;
 
-    const registered = await useFetch(`${baseUrl}users`,)
+    const response = await useFetch(`${baseUrl}users`)
       .post(credentials)
       .json();
 
     isLoading.value = false;
 
-    if (registered.error.value) {
-      console.log(registered.error)
-      failedLogin("Echec de l'inscription");
+    if (response.error.value) {
+      error.value = response.data.value?.message ||
+        response.error.value?.message ||
+        "Échec de l'inscription. Veuillez réessayer.";
       return;
     }
 
-    if (registered.data.value?.data) {
-      const userData = registered.data.value.data;
-      console.log(`[SUCCESS] User registered: ${userData.email}. Account is now active.`);
-    }
-
     await router.push("/");
-  };
-
-  const handleUnauthorized = () => {
-    logout();
-    router.push('/login');
   };
 
   return {
@@ -158,6 +149,5 @@ export const useAuthStore = defineStore("auth", () => {
     getCurrentLocale,
     register,
     resetPassword,
-    handleUnauthorized,
   };
 });
