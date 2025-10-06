@@ -7,3 +7,5 @@ Success:
         RetrievedList: "Liste de %entity% récupérée avec succès."
     Authentication:
         Login: "Connexion réussie."
+    User:
+        ResetPassword: "Le mot de passe à été changé aves succès."

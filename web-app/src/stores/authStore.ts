@@ -27,7 +27,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const authenticate = async (): Promise<boolean> => {
     const { error: userError } = await useFetch<User>(
-      `${baseUrl}users/me`,
+      `${baseUrl}users/authenticate`,
       {
         headers: { Authorization: `Bearer ${token.value}` },
       },
@@ -41,7 +41,6 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticated.value = true;
     return true;
   };
-
 
   const login = async (credentials: { email: string; password: string }): Promise<boolean> => {
     isLoading.value = true;

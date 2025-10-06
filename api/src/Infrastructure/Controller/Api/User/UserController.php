@@ -29,7 +29,7 @@ final class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/me', name: 'me', methods: ['GET'])]
+    #[Route('/authenticate', name: 'authenticate', methods: ['GET'])]
     public function me(): JsonResponse
     {
         return $this->json([
@@ -166,7 +166,7 @@ final class UserController extends AbstractController
 
             return new JsonResponse(
                 $this->responseFormatter->formatResponse(
-                    "Success.ForgotPassword.Reset",
+                    "Success.User.ResetPassword",
                     [],
                     'success',
                 )

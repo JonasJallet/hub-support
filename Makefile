@@ -27,6 +27,9 @@ api-logs:
 api-sh:
 	@$(MAKE) -C $(BACK_DIR) sh
 
+api-tests:
+	@docker exec -it php_fpm php bin/phpunit
+
 check-daily-clients:
 	@docker exec -it php_fpm php bin/console app:check-daily-clients
 
