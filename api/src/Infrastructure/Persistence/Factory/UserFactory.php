@@ -4,7 +4,6 @@ namespace App\Infrastructure\Persistence\Factory;
 
 use App\Domain\Entity\User;
 use App\Domain\Service\Authentication\AuthenticationInterface;
-use App\Infrastructure\Security\Authentication\Authentication;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**

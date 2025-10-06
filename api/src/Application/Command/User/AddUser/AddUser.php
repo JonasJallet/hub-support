@@ -34,7 +34,7 @@ class AddUser implements Command
         message: 'Exceptions.Assert.User.PasswordCompromised',
     )]
     #[Assert\Regex(
-        pattern: '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/',
+        pattern: '/^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/',
         message: 'Exceptions.Assert.User.PasswordStrength',
     )]
     public string $password;

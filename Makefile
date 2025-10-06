@@ -37,7 +37,7 @@ check-daily-clients:
 # 🌐 Web-app Commands
 # ─────────────────────────────
 
-web-app-up:
+web-app-start:
 	@echo "Starting web-app..."
 	@$(FRONT_COMPOSE) up --build -d
 
@@ -48,16 +48,16 @@ web-app-down:
 web-app-logs:
 	@$(FRONT_COMPOSE) logs -f
 
-web-app-restart: web-app-down web-app-up
+web-app-restart: web-app-down web-app-start
 
 # ─────────────────────────────
 # 🌍 Combined Commands
 # ─────────────────────────────
 
-start: api-start web-app-up
+start: api-start web-app-start
 	@echo "Api and Web-app have started."
 
-up: api-up web-app-up
+up: api-up web-app-start
 	@echo "Api and Web-app are up."
 
 down: api-down web-app-down

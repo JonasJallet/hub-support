@@ -7,7 +7,8 @@ import {
 import { useAuthStore } from '@/stores/authStore.ts'
 import HomeView from '@/views/HomeView.vue'
 import AuthLoginView from '@/pages/auth/AuthLogin.vue';
-import AuthRegistrationView from '@/pages/auth/AuthRegistration.vue';
+import UserRegistrationView from '@/pages/user/UserRegistration.vue';
+import UserResetPassword from '@/pages/user/UserResetPassword.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,13 @@ const router = createRouter({
     {
       path: "/registration",
       name: "registration",
-      component: AuthRegistrationView,
+      component: UserRegistrationView,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: "/reset-password",
+      name: "reset-password",
+      component: UserResetPassword,
       meta: { requiresAuth: false },
     },
   ],
@@ -40,7 +47,7 @@ router.beforeEach(
   ) => {
     const authStore = useAuthStore();
 
-    const publicPages = ['/login', '/registration'];
+    const publicPages = ['/login', '/registration', '/reset-password'];
 
     if (authStore.isAuthenticated && publicPages.includes(to.path)) {
       return next("/");

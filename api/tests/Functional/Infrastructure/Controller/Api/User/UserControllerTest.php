@@ -95,7 +95,7 @@ class UserControllerTest extends ApiTestCase
         $response = $this->browser()->patch('/api/users/reset-password', [
             'json' => [
                 'email' => $loggedUser['email'],
-                'password' => 'NewPassword123!',
+                'newPassword' => 'NewPassword123!',
             ],
             'headers' => ['Authorization' => 'Bearer ' . $loggedUser['token']],
         ])

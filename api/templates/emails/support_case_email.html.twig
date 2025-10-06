@@ -10,8 +10,8 @@
             -ms-text-size-adjust: 100%;
         }
         table, td {
-            mso-table-lspace: 0pt;
-            mso-table-rspace: 0pt;
+            mso-table-lspace: 0;
+            mso-table-rspace: 0;
         }
         img {
             -ms-interpolation-mode: bicubic;
@@ -96,12 +96,9 @@
 </head>
 <body>
 <div class="container">
-    <!-- Header -->
     <div class="header">
         <h1>📩 Nouveau ticket de support</h1>
     </div>
-
-    <!-- Content -->
     <div class="content">
         <p>Un nouvel utilisateur a soumis un formulaire de support.</p>
 
@@ -112,25 +109,19 @@
             </div>
         {% endif %}
 
-        {% if form.subject is defined %}
+        {% if support_case.subject is defined %}
             <div class="field">
                 <strong>Sujet</strong>
-                <span>{{ form.subject }}</span>
+                <span>{{ support_case.subject }}</span>
             </div>
         {% endif %}
 
-        {% if form.message is defined %}
+        {% if support_case.message is defined %}
             <div class="field">
                 <strong>Message</strong>
-                <p>{{ form.message|nl2br }}</p>
+                <p>{{ support_case.message|nl2br }}</p>
             </div>
         {% endif %}
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        Cet e-mail a été envoyé automatiquement par le système de support.<br>
-        Merci de ne pas y répondre directement.
     </div>
 </div>
 </body>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useFetch, useStorage } from '@vueuse/core'
 import type { PasswordAccess, RegistrationAccess, User } from '../types/auth'
 import router from '../router'
@@ -7,18 +7,13 @@ import router from '../router'
 const baseUrl = import.meta.env.VITE_API_URL;
 
 export const useAuthStore = defineStore("auth", () => {
-  const user = useStorage<User | null>("user", null);
-  const token = useStorage<string | null>("token", null);
-  const isAuthenticated = useStorage<boolean>("isAuthenticated", false);
-  const currentLocale = useStorage<{ name: string; code: string }>(
-    "currentLocale",
-    { name: "🇺🇸", code: "en" },
-  );
+  const user = useStorage<User | null>("user", null, sessionStorage);
+  const token = useStorage<string | null>("token", null, sessionStorage);
+  const isAuthenticated = computed(() => !!user.value && !!token.value);
   const isLoading = ref<boolean>(false);
   const error = ref<string | null>(null);
 
   const failedLogin = (reason: string | null = "common.invalid-credentials") => {
-    isAuthenticated.value = false;
     user.value = null;
     token.value = null;
     isLoading.value = false;
@@ -26,6 +21,11 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const authenticate = async (): Promise<boolean> => {
+    if (!token.value) {
+      failedLogin();
+      return false;
+    }
+
     const { error: userError } = await useFetch<User>(
       `${baseUrl}users/authenticate`,
       {
@@ -38,7 +38,6 @@ export const useAuthStore = defineStore("auth", () => {
       return false;
     }
 
-    isAuthenticated.value = true;
     return true;
   };
 
@@ -70,7 +69,6 @@ export const useAuthStore = defineStore("auth", () => {
     if (responseData?.token) {
       token.value = responseData.token;
       user.value = responseData;
-      isAuthenticated.value = true;
       await authenticate();
       return true;
     } else {
@@ -79,40 +77,34 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     user.value = null;
     token.value = null;
-    isAuthenticated.value = false;
     isLoading.value = false;
     error.value = null;
-    window.location.reload();
+    await router.push("/login");
   };
 
-  const setCurrentLocale = (newCurrentLocale: {
-    name: string;
-    code: string;
-  }) => {
-    currentLocale.value = newCurrentLocale;
-  };
-
-  const getCurrentLocale = () => {
-    return currentLocale.value;
-  };
-
-  const resetPassword = async (payload: PasswordAccess) => {
+  const resetPassword = async (currentPassword: string, payload: PasswordAccess) => {
     isLoading.value = true;
     error.value = null;
 
-    const reset = await useFetch(`${baseUrl}users/reset-password`)
+    await login({ email: payload.email, password: currentPassword })
+
+    console.log(token.value)
+
+    const reset = await useFetch(`${baseUrl}users/reset-password`, {
+      headers: { Authorization: `Bearer ${token.value}` },
+    })
       .patch(payload)
       .json();
 
     isLoading.value = false;
 
     if (!reset.error.value) {
-      await router.push("/");
+      await logout();
     } else {
-      error.value = "common.reset-password-failed";
+      error.value = "Échec de changement du mot de passe.";
     }
   };
 
@@ -144,8 +136,6 @@ export const useAuthStore = defineStore("auth", () => {
     error,
     login,
     logout,
-    setCurrentLocale,
-    getCurrentLocale,
     register,
     resetPassword,
   };

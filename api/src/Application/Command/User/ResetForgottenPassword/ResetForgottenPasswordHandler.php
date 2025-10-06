@@ -20,20 +20,19 @@ readonly class ResetForgottenPasswordHandler
 
     public function __invoke(ResetForgottenPassword $resetForgottenPassword): void
     {
-        $plainPassword = $resetForgottenPassword->password;
         $email = $resetForgottenPassword->email;
-
         $user = $this->userRepository->read($email);
 
         if ($user === null || $user->getEmail() !== $email) {
             throw new UserNotFoundException($email);
         }
 
-        if ($this->authentication->isPasswordValid($user, $plainPassword)) {
+        $newPassword = $resetForgottenPassword->newPassword;
+        if ($this->authentication->isPasswordValid($user, $newPassword)) {
             throw new PasswordIsNotDifferentException();
         }
 
-        $user->setPassword($this->authentication->hashPassword($user, $plainPassword));
+        $user->setPassword($this->authentication->hashPassword($user, $newPassword));
         $this->userRepository->edit($user);
     }
 }

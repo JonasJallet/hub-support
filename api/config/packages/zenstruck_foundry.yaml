@@ -1,12 +1,6 @@
 when@dev: &dev
     # See full configuration: https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#full-default-bundle-configuration
     zenstruck_foundry:
-        # Add or modify the 'persistence' section to set the deprecated option
-        persistence:
-            flush_once: false # Keep default in dev if you prefer
+    # Whether to auto-refresh proxies by default (https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#auto-refresh)
 
-when@test:
-    zenstruck_foundry:
-        persistence:
-            # Set this to 'true' to resolve the deprecation warning
-            flush_once: true
+when@test: *dev

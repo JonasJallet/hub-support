@@ -24,37 +24,31 @@ final readonly class AddSupportCaseHandler implements CommandHandler
     /**
      * @throws TransportExceptionInterface
      */
-    public function __invoke(AddSupportCase $addForm): void
+    public function __invoke(AddSupportCase $addSupportCase): void
     {
-        $form = $addForm->toEntity();
-
-        if ($addForm->file !== null) {
-            $form->setFile(file_get_contents($addForm->file->getPathname()));
-        }
-
+        $supportCase = $addSupportCase->toEntity();
+        $this->supportCaseRepository->add($supportCase);
         $userEmail = $this->security->getUser()->getUserIdentifier();
-
-        $this->supportCaseRepository->add($form);
-        $addForm->id = $form->getId();
 
         $email = (new TemplatedEmail())
             ->from($userEmail)
             ->to('hub-support@mail.com')
             ->subject('Nouveau ticket de support')
-            ->htmlTemplate('emails/form_submitted.html.twig')
+            ->htmlTemplate('emails/support_case_email.html.twig')
             ->context([
-                'form' => $form,
+                'support_case' => $addSupportCase,
                 'user_email' => $userEmail,
             ]);
 
-        if ($addForm->file !== null) {
-            $email->attachFromPath(
-                $addForm->file->getPathname(),
-                $addForm->file->getClientOriginalName(),
-                $addForm->file->getMimeType()
+        if ($addSupportCase->file !== null) {
+            $email->attach(
+                file_get_contents($addSupportCase->file->getPathname()),
+                $addSupportCase->file->getClientOriginalName(),
+                $addSupportCase->file->getMimeType()
             );
         }
 
         $this->mailer->send($email);
+        $addSupportCase->id = $supportCase->getId();
     }
 }

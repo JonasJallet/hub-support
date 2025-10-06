@@ -41,7 +41,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+  <div class="min-h-[calc(100vh-10rem)] flex items-center justify-center p-4">
     <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl space-y-6">
       <h2 class="text-3xl font-extrabold text-gray-900 text-center">Se connecter</h2>
 

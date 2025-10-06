@@ -61,7 +61,6 @@ final class UserController extends AbstractController
         content: new OA\JsonContent(
             properties: [
                 new OA\Property(property: 'message', type: 'string'),
-                new OA\Property(property: 'status', type: 'string'),
                 new OA\Property(property: 'data', type: 'object')
             ]
         )
@@ -150,6 +149,16 @@ final class UserController extends AbstractController
     #[Route("/reset-password", name: "_forgotten_password", methods: ["PATCH"])]
     #[OA\Patch(
         summary: "Reset forgotten password",
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'email', type: 'string', format: 'email'),
+                new OA\Property(property: 'currentPassword', type: 'string'),
+                new OA\Property(property: 'newPassword', type: 'string'),
+            ]
+        )
     )]
     #[OA\Response(
         response: Response::HTTP_OK,

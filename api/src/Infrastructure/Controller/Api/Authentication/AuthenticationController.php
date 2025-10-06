@@ -7,6 +7,7 @@ use App\Application\Query\User\ReadUser\ReadUser;
 use App\Infrastructure\Persistence\Repository\DoctrineUserRepository;
 use App\Infrastructure\Security\Authentication\Authentication;
 use App\Infrastructure\Utils\ResponseFormatter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,8 @@ class AuthenticationController extends AbstractController
         private readonly QueryBus $queryBus,
         private readonly Authentication $authentication,
         private readonly ResponseFormatter $responseFormatter,
-        private readonly DoctrineUserRepository $doctrineUserRepository
+        private readonly DoctrineUserRepository $doctrineUserRepository,
+        private readonly EntityManagerInterface $em
     ) {
     }
 
@@ -84,6 +86,7 @@ class AuthenticationController extends AbstractController
 
             $token = $this->authentication->ensureLoginIsValid($userEntity, $result->password);
             $userEntity->updateLastLogin();
+            $this->em->flush();
 
             return new JsonResponse(
                 $this->responseFormatter->formatResponse(

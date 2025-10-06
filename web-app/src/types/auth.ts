@@ -1,6 +1,6 @@
 export type PasswordAccess = {
   email: string;
-  password: string;
+  newPassword: string;
 }
 
 export type RegistrationAccess = {
@@ -9,8 +9,6 @@ export type RegistrationAccess = {
   firstName: string;
   lastName: string;
 }
-
-
 
 export type User = {
   id: number;
